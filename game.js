@@ -2,7 +2,6 @@ window.onload = function () {
 
     // TODO: Randomize obstacle Sprite
 
-
     // canvas
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -63,7 +62,7 @@ window.onload = function () {
             switch (keycode.keyCode) {
                 case 32:
                 case 38:
-                    jump = setInterval(jump, 2);
+                    jumpInterval = setInterval(jump, 2);
                     break;
             }
     }
@@ -79,7 +78,7 @@ window.onload = function () {
             if (Math.floor(playerY) >= Math.floor(initialY)) {
                 isJumping = false;
                 goingDown = false;
-                clearInterval(jump);
+                clearInterval(jumpInterval);
             }
 
         }
