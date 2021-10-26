@@ -2,6 +2,19 @@ window.onload = function () {
 
     // TODO: Randomize obstacle Sprite
 
+    // event handler
+    const button = document.getElementById('restart-button')
+    button.addEventListener('click', () => {
+        gameSetup()
+        button.style.display = 'none'
+    })
+
+    const handler = new EventHandler();
+    handler.on('game:lose', () => {
+        // show restart button
+        button.style.display = 'block'  
+    });
+
     // canvas
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -31,16 +44,41 @@ window.onload = function () {
     let obstacleSpeed = 1;
 
     // counters
-    const playerScoreTimer = setInterval(scoreTimer, 1000);
-    const playerSpriteTimer = setInterval(spriteTimer, 300);
+    let playerScoreTimer = setInterval(scoreTimer, 1000);
+    let playerSpriteTimer = setInterval(spriteTimer, 300);
 
     // game
     let score = 0;
     let timeout = 5;
-    const game = setInterval(gameLoop, timeout);
+    let game = setInterval(gameLoop, timeout);
 
     // detect clicks and call MovePlayer()
     window.onkeydown = movePlayer;
+
+    const gameSetup = () => {
+        changeSprite = false;
+
+        // jumping
+        limit = 125;
+        goingDown = false;
+        isJumping = false;
+        jumpSpeed = 1;
+
+        // player & obstacle start position
+        playerY = canvas.height / yDivisor, obstacleX = canvas.width + 10;
+
+        // obstacle
+        obstacleSpeed = 1;
+
+        // counters
+        playerScoreTimer = setInterval(scoreTimer, 1000);
+        playerSpriteTimer = setInterval(spriteTimer, 300);
+
+        // game
+        score = 0;
+        timeout = 5;
+        game = setInterval(gameLoop, timeout);
+    }
 
     // functions
     function gameLoop() {
@@ -93,6 +131,7 @@ window.onload = function () {
 
 
             writeGameOverMessage();
+            handler.emit('game:lose');
         }
     }
 
@@ -165,5 +204,25 @@ window.onload = function () {
             obstacleX = canvas.width + obstacle.width;
         }
 
+    }
+}
+
+
+class EventHandler {
+    constructor() {
+        this.events = {};
+    }
+
+    on(event, callback) {
+        if (!this.events[event]) {
+            this.events[event] = [];
+        }
+        this.events[event].push(callback);
+    }
+
+    emit(event, ...args) {
+        if (this.events[event]) {
+            this.events[event].forEach(callback => callback(...args));
+        }
     }
 }

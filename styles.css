@@ -1,0 +1,19 @@
+#restart-button {
+    position: absolute;
+    padding: 0.5em;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #fff;
+    background-color: hsl(334, 100%, 50%);
+    border-radius: 0.5em;
+    cursor: pointer;
+    display: none;
+    transition: all 0.5s;
+    border: none;
+    top: 26%;
+    left: 18%;
+}
+
+#restart-button:hover {
+    background-color: hsl(334, 100%, 30%);
+}
