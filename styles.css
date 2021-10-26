@@ -10,8 +10,8 @@
     display: none;
     transition: all 0.5s;
     border: none;
-    top: 26%;
-    left: 18%;
+    top: 355px;
+    left: 681px;
 }
 
 #restart-button:hover {
