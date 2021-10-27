@@ -1,6 +1,7 @@
 window.onload = function () {
+    // preload sprites
     const assetsUrl = "assets/"
-    // TODO: Randomize obstacle Sprite
+    preloadAllSprites();
 
     // event handler
     const button = document.getElementById('restart-button')
@@ -19,10 +20,9 @@ window.onload = function () {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
-    //ctx.addEventListener("touchstart", handleStart, false);
-
     // setting up sprites
     const player = new Image(), obstacle = new Image(), ground = new Image(), sky = new Image();
+    
     obstacle.src = `${assetsUrl}obstacle_1.png`;
     player.src = `${assetsUrl}player1_1.png`;
     ground.src = `${assetsUrl}ground1_1.png`;
@@ -160,7 +160,7 @@ window.onload = function () {
     }
     //#endregion
 
-    //#region SPRITE
+    //#region Functions related to Sprite
 
     function changeSprites() {
         changePlayerSprite();
@@ -187,7 +187,6 @@ window.onload = function () {
             groundSpriteCounter = 1;
         }
     }
-    //#endregion
 
     function drawEverything(x, y) {
         drawSky();
@@ -213,17 +212,15 @@ window.onload = function () {
         obstacleX -= obstacleSpeed;
     }
 
-    function randomizer(max) {
-        return Math.floor(Math.random() * max) + 1;
-    }
+    //#endregion
 
     function updateDifficulty() {
-        const multiplier = score * 0.00000001;
+        const multiplier = score * 0.0000001;
         obstacleSpeed += multiplier;
         jumpSpeed += multiplier;
     }
 
-    //#region Functions related to text
+    //#region Functions related to Text
     function scoreTimer() {
         score = score + 10 // to update score every second, as a timer
     }
@@ -232,23 +229,60 @@ window.onload = function () {
         ctx.font = "30px Verdana";
         ctx.fillStyle = textColor;
         ctx.textAlign = "left";
-        ctx.fillText("Score: " + score, canvas.width / 40, canvas.height / 10);
+        ctx.fillText("Pontuação: " + score, canvas.width / 40, canvas.height / 10);
     }
 
     function writeGameOverMessage() {
         ctx.font = "72px Verdana";
         ctx.fillStyle = textColor;
         ctx.textAlign = "center";
-        ctx.fillText("Game Over!", canvas.width / 2, canvas.height / 2);
+        ctx.fillText("Fim de Jogo!", canvas.width / 2, canvas.height / 2);
     }
 
     function writeStartMessage() {
         ctx.font = "16px Verdana";
         ctx.fillStyle = textColor;
         ctx.textAlign = "center";
-        ctx.fillText("Pressione 'Espaço' ou 'Seta para cima' para pular", canvas.width / 1.6, canvas.height / 11.5);
+        ctx.fillText("Toque na tela para pular", 650, canvas.height / 11.5);
     }
     //#endregion
+
+    //#region Functions related to Tools
+    function randomizer(max) {
+        return Math.floor(Math.random() * max) + 1;
+    }
+
+    function preloadAllSprites() {
+        // player
+        preloadSprites(`${assetsUrl}player1_1.png`);
+        preloadSprites(`${assetsUrl}player1_2.png`);
+        preloadSprites(`${assetsUrl}player1_3.png`);
+        preloadSprites(`${assetsUrl}player1_4.png`);
+
+        // obstacles
+        preloadSprites(`${assetsUrl}obstacle_1.png`);
+
+        // ground
+        preloadSprites(`${assetsUrl}ground1_1.png`);
+        preloadSprites(`${assetsUrl}ground1_2.png`);
+        preloadSprites(`${assetsUrl}ground1_3.png`);
+        preloadSprites(`${assetsUrl}ground1_4.png`);
+        preloadSprites(`${assetsUrl}ground1_5.png`);
+        preloadSprites(`${assetsUrl}ground1_6.png`);
+        preloadSprites(`${assetsUrl}ground1_7.png`);
+        preloadSprites(`${assetsUrl}ground1_8.png`);
+
+        // sky
+        preloadSprites(`${assetsUrl}sky1.png`);
+    }
+
+    function preloadSprites(url) {
+        let img = new Image();
+        img.src = url;
+    }
+    //#endregion
+
+
 }
 
 
