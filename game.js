@@ -33,6 +33,7 @@ window.onload = function () {
     let playerSpriteCounter = 1;
     let skySpriteCounter = 1;
     let groundSpriteCounter = 1;
+    let skySpriteChange = false;
 
     // jumping
     let limit = 80;
@@ -54,6 +55,8 @@ window.onload = function () {
     // counters
     let playerScoreTimer = setInterval(scoreTimer, 1000);
     let playerSpriteTimer = setInterval(spriteTimer, 300);
+    let difficultyTimer = setInterval(updateDifficulty, 1000);
+    let gameTime = 1;
 
     // game
     let score = 0;
@@ -69,6 +72,7 @@ window.onload = function () {
         playerSpriteCounter = 1;
         skySpriteCounter = 1;
         groundSpriteCounter = 1;
+        skySpriteChange = false;
 
         // jumping
         limit = 80;
@@ -85,6 +89,8 @@ window.onload = function () {
         // counters
         playerScoreTimer = setInterval(scoreTimer, 1000);
         playerSpriteTimer = setInterval(spriteTimer, 300);
+        difficultyTimer = setInterval(updateDifficulty, 1000);
+        gameTime = 0;
 
         // game
         score = 0;
@@ -102,7 +108,6 @@ window.onload = function () {
         detectCollisions(obstacleX, obstacleY);
         writeStartMessage();
         writeScoreText();
-        updateDifficulty();
     }
 
     //#region Functions related to Movement
@@ -146,6 +151,7 @@ window.onload = function () {
             window.clearInterval(game);
             window.clearInterval(playerScoreTimer);
             window.clearInterval(playerSpriteTimer);
+            window.clearInterval(difficultyTimer);
 
 
             writeGameOverMessage();
@@ -163,8 +169,10 @@ window.onload = function () {
     //#region Functions related to Sprite
 
     function changeSprites() {
+        
         changePlayerSprite();
         changeGroundSprite();
+        changeSkySprite();
     }
 
     function changePlayerSprite() {
@@ -173,6 +181,10 @@ window.onload = function () {
 
     function changeGroundSprite() {
         ground.src = `${assetsUrl}ground1_${groundSpriteCounter}.png`;
+    }
+
+    function changeSkySprite() {
+        skySpriteChange ? sky.src = `${assetsUrl}sky1.png` : sky.src = `${assetsUrl}sky2.png`
     }
 
     function spriteTimer() {
@@ -215,7 +227,13 @@ window.onload = function () {
     //#endregion
 
     function updateDifficulty() {
-        const multiplier = score * 0.0000001;
+        gameTime++;
+
+        if (gameTime % 30 == 0) {
+            skySpriteChange ? skySpriteChange = false : skySpriteChange = true;
+        }
+
+        const multiplier = 0.015;
         obstacleSpeed += multiplier;
         jumpSpeed += multiplier;
     }
@@ -274,6 +292,7 @@ window.onload = function () {
 
         // sky
         preloadSprites(`${assetsUrl}sky1.png`);
+        preloadSprites(`${assetsUrl}sky2.png`);
     }
 
     function preloadSprites(url) {
@@ -281,8 +300,6 @@ window.onload = function () {
         img.src = url;
     }
     //#endregion
-
-
 }
 
 
