@@ -1,5 +1,5 @@
 window.onload = function () {
-
+    const assetsUrl = "assets/"
     // TODO: Randomize obstacle Sprite
 
     // event handler
@@ -19,25 +19,33 @@ window.onload = function () {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
+    //ctx.addEventListener("touchstart", handleStart, false);
+
     // setting up sprites
-    const player = new Image(), obstacle = new Image();
-    obstacle.src = "images/obstacle-600.png";
-    player.src = "images/player1-600.png";
-    let changeSprite = false;
+    const player = new Image(), obstacle = new Image(), ground = new Image(), sky = new Image();
+    obstacle.src = `${assetsUrl}obstacle_1.png`;
+    player.src = `${assetsUrl}player1_1.png`;
+    ground.src = `${assetsUrl}ground1_1.png`;
+    sky.src = `${assetsUrl}sky1.png`;
+
+
+    // sprite counters
+    let playerSpriteCounter = 1;
+    let skySpriteCounter = 1;
+    let groundSpriteCounter = 1;
 
     // jumping
-    let limit = 125;
+    let limit = 80;
     let goingDown = false;
     let isJumping = false;
     let jumpSpeed = 1;
 
     // texts
-    const textColor = "black"
+    const textColor = "white"
 
     // player & obstacle start position
-    const yDivisor = 1.5;
-    const playerX = canvas.width / 11, obstacleY = (canvas.height / yDivisor) + 40;
-    let playerY = canvas.height / yDivisor, obstacleX = canvas.width + 10;
+    const playerX = canvas.width / 11, obstacleY = canvas.height - 180;
+    let playerY = canvas.height - 150, obstacleX = canvas.width + 10;
     const initialY = playerY;
 
     // obstacle
@@ -53,19 +61,23 @@ window.onload = function () {
     let game = setInterval(gameLoop, timeout);
 
     // detect clicks and call MovePlayer()
-    window.onkeydown = movePlayer;
+    window.onkeydown = movePlayerUsingKeyboard;
+    window.ontouchstart = movePlayerUsingKeyboard;
 
     const gameSetup = () => {
-        changeSprite = false;
+        // sprite counters
+        playerSpriteCounter = 1;
+        skySpriteCounter = 1;
+        groundSpriteCounter = 1;
 
         // jumping
-        limit = 125;
+        limit = 80;
         goingDown = false;
         isJumping = false;
         jumpSpeed = 1;
 
         // player & obstacle start position
-        playerY = canvas.height / yDivisor, obstacleX = canvas.width + 10;
+        playerY = canvas.height - 150, obstacleX = canvas.width + 10;
 
         // obstacle
         obstacleSpeed = 1;
@@ -84,25 +96,31 @@ window.onload = function () {
     function gameLoop() {
         ctx.clearRect(0, 0, 800, 400);
 
-        drawGround();
-        changePlayerSprite();
-        drawPlayer(playerX, playerY);
-        writeStartMessage();
-        controlObstacle();
+        changeSprites();
+        drawEverything(playerX, playerY);
         checkForBoundaries();
         detectCollisions(obstacleX, obstacleY);
-        updateDifficulty();
+        writeStartMessage();
         writeScoreText();
+        updateDifficulty();
     }
 
-    function movePlayer(keycode) {
-        if (!isJumping)
+    //#region Functions related to Movement
+    function movePlayerUsingKeyboard(keycode) {
+        if (!isJumping) {
             switch (keycode.keyCode) {
                 case 32:
                 case 38:
                     jumpInterval = setInterval(jump, 2);
                     break;
             }
+        }
+    }
+
+    function movePlayerUsingTouch() {
+        if (!isJumping) {
+            jumpInterval = setInterval(jump, 2);
+        }
     }
 
     function jump() {
@@ -118,13 +136,13 @@ window.onload = function () {
                 goingDown = false;
                 clearInterval(jumpInterval);
             }
-
         }
     }
 
     function detectCollisions(obstacleX, obstacleY) {
-        if (((playerX + player.width - 25) > obstacleX && playerX < (obstacleX + obstacle.width - 25)) &&
-            ((playerY + player.width - 25) > obstacleY) && (playerY < (obstacleY + obstacle.height - 25))) {
+        const tolerance = 60;
+        if (((playerX + player.width - tolerance) > obstacleX && playerX < (obstacleX + obstacle.width - tolerance)) &&
+            ((playerY + player.width - tolerance) > obstacleY) && (playerY < (obstacleY + obstacle.height - tolerance))) {
             window.clearInterval(game);
             window.clearInterval(playerScoreTimer);
             window.clearInterval(playerSpriteTimer);
@@ -135,39 +153,77 @@ window.onload = function () {
         }
     }
 
-    function drawPlayer(x, y) {
+    function checkForBoundaries() {
+        if (obstacleX < -obstacle.width) {
+            obstacleX = canvas.width + obstacle.width;
+        }
+    }
+    //#endregion
+
+    //#region SPRITE
+
+    function changeSprites() {
         changePlayerSprite();
+        changeGroundSprite();
+    }
+
+    function changePlayerSprite() {
+        player.src = `${assetsUrl}player1_${playerSpriteCounter}.png`;
+    }
+
+    function changeGroundSprite() {
+        ground.src = `${assetsUrl}ground1_${groundSpriteCounter}.png`;
+    }
+
+    function spriteTimer() {
+        playerSpriteCounter++
+        groundSpriteCounter++;
+
+        if (playerSpriteCounter > 4) {
+            playerSpriteCounter = 1;
+        }
+
+        if (groundSpriteCounter > 8) {
+            groundSpriteCounter = 1;
+        }
+    }
+    //#endregion
+
+    function drawEverything(x, y) {
+        drawSky();
+        drawGround();
+        drawPlayer(x ,y);
+        drawObstacle();
+    }
+
+    function drawPlayer(x, y) {
         ctx.drawImage(player, x, y);
     }
 
-
-    function changePlayerSprite() {
-        if (changeSprite) {
-            player.src = "images/player1-600.png";
-        } else {
-            player.src = "images/player2-600.png";
-        }
+    function drawGround() {
+        ctx.drawImage(ground, 0, 0);
     }
 
-    function drawGround() {
-        ctx.fillStyle = "#d77bba";
-        ctx.fillRect(0, canvas.height / 1.2, canvas.width, canvas.height);
+    function drawSky() {
+        ctx.drawImage(sky, 0, 0);
+    }
+
+    function drawObstacle() {
+        ctx.drawImage(obstacle, obstacleX, obstacleY);
+        obstacleX -= obstacleSpeed;
     }
 
     function randomizer(max) {
         return Math.floor(Math.random() * max) + 1;
     }
 
-
-    function controlObstacle() {
-        ctx.drawImage(obstacle, obstacleX, obstacleY);
-        obstacleX -= obstacleSpeed;
+    function updateDifficulty() {
+        const multiplier = score * 0.00000001;
+        obstacleSpeed += multiplier;
+        jumpSpeed += multiplier;
     }
 
-    function spriteTimer() {
-        changeSprite ? changeSprite = false : changeSprite = true;
-    }
-
+    //#region Functions related to text
     function scoreTimer() {
         score = score + 10 // to update score every second, as a timer
     }
@@ -175,14 +231,8 @@ window.onload = function () {
     function writeScoreText() {
         ctx.font = "30px Verdana";
         ctx.fillStyle = textColor;
-        ctx.textAlign = "right";
-        ctx.fillText("Score: " + score, canvas.width / 5, canvas.height / 10);
-    }
-
-    function updateDifficulty() {
-        const multiplier = score * 0.00000001;
-        obstacleSpeed += multiplier;
-        jumpSpeed += multiplier;
+        ctx.textAlign = "left";
+        ctx.fillText("Score: " + score, canvas.width / 40, canvas.height / 10);
     }
 
     function writeGameOverMessage() {
@@ -198,13 +248,7 @@ window.onload = function () {
         ctx.textAlign = "center";
         ctx.fillText("Pressione 'Espaço' ou 'Seta para cima' para pular", canvas.width / 1.6, canvas.height / 11.5);
     }
-
-    function checkForBoundaries() {
-        if (obstacleX < -obstacle.width) {
-            obstacleX = canvas.width + obstacle.width;
-        }
-
-    }
+    //#endregion
 }
 
 

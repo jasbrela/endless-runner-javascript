@@ -3,8 +3,8 @@
     padding: 0.5em;
     font-size: 1.5em;
     font-weight: bold;
-    color: #fff;
-    background-color: hsl(334, 100%, 50%);
+    color: white;
+    background-color: #77AAE5;
     border-radius: 0.5em;
     cursor: pointer;
     display: none;
@@ -15,5 +15,5 @@
 }
 
 #restart-button:hover {
-    background-color: hsl(334, 100%, 30%);
+    background-color: #011343;
 }
