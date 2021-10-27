@@ -1,7 +1,35 @@
 window.onload = function () {
     // preload sprites
     const assetsUrl = "assets/"
-    preloadAllSprites();
+    let imgURLs = [
+        // player
+        `${assetsUrl}player1_1.png`,
+        `${assetsUrl}player1_2.png`,
+        `${assetsUrl}player1_3.png`,
+        `${assetsUrl}player1_4.png`,
+
+        // obstacle
+        `${assetsUrl}obstacle_1.png`,
+
+        // ground
+        `${assetsUrl}ground1_1.png`,
+        `${assetsUrl}ground1_2.png`,
+        `${assetsUrl}ground1_3.png`,
+        `${assetsUrl}ground1_4.png`,
+        `${assetsUrl}ground1_5.png`,
+        `${assetsUrl}ground1_6.png`,
+        `${assetsUrl}ground1_7.png`,
+        `${assetsUrl}ground1_8.png`,
+
+        // sky
+        `${assetsUrl}sky1.png`,
+        `${assetsUrl}sky2.png`,
+
+    ]
+    let images = []
+    let count = imgURLs.length;
+
+    preloadSprites(imgURLs, images, count);
 
     // event handler
     const button = document.getElementById('restart-button')
@@ -31,7 +59,6 @@ window.onload = function () {
 
     // sprite counters
     let playerSpriteCounter = 1;
-    let skySpriteCounter = 1;
     let groundSpriteCounter = 1;
     let skySpriteChange = false;
 
@@ -55,13 +82,18 @@ window.onload = function () {
     // counters
     let playerScoreTimer = setInterval(scoreTimer, 1000);
     let playerSpriteTimer = setInterval(spriteTimer, 300);
-    let difficultyTimer = setInterval(updateDifficulty, 1000);
-    let gameTime = 1;
+    let difficultyTimer = setInterval(updateGameVariables, 1000);
 
     // game
     let score = 0;
     let timeout = 5;
     let game = setInterval(gameLoop, timeout);
+
+    // others
+    let gameTime = 1;
+    let showStartText = true;
+    let showPlusText = false;
+    let phase = 1;
 
     // detect clicks and call MovePlayer()
     window.onkeydown = movePlayerUsingKeyboard;
@@ -89,13 +121,19 @@ window.onload = function () {
         // counters
         playerScoreTimer = setInterval(scoreTimer, 1000);
         playerSpriteTimer = setInterval(spriteTimer, 300);
-        difficultyTimer = setInterval(updateDifficulty, 1000);
-        gameTime = 0;
+        difficultyTimer = setInterval(updateGameVariables, 1000);
 
         // game
         score = 0;
         timeout = 5;
         game = setInterval(gameLoop, timeout);
+
+        // others
+        gameTime = 0;
+        showStartText = true;
+        showPlusText = false;
+        phase = 1;
+
     }
 
     // functions
@@ -106,8 +144,7 @@ window.onload = function () {
         drawEverything(playerX, playerY);
         checkForBoundaries();
         detectCollisions(obstacleX, obstacleY);
-        writeStartMessage();
-        writeScoreText();
+        writeAllTexts();
     }
 
     //#region Functions related to Movement
@@ -154,7 +191,7 @@ window.onload = function () {
             window.clearInterval(difficultyTimer);
 
 
-            writeGameOverMessage();
+            writeGameOverText();
             handler.emit('game:lose');
         }
     }
@@ -184,7 +221,7 @@ window.onload = function () {
     }
 
     function changeSkySprite() {
-        skySpriteChange ? sky.src = `${assetsUrl}sky1.png` : sky.src = `${assetsUrl}sky2.png`
+        skySpriteChange ? sky.src = `${assetsUrl}sky2.png` : sky.src = `${assetsUrl}sky1.png`
     }
 
     function spriteTimer() {
@@ -195,7 +232,7 @@ window.onload = function () {
             playerSpriteCounter = 1;
         }
 
-        if (groundSpriteCounter > 8) {
+        if (groundSpriteCounter > 2) {
             groundSpriteCounter = 1;
         }
     }
@@ -226,13 +263,24 @@ window.onload = function () {
 
     //#endregion
 
-    function updateDifficulty() {
+    function updateGameVariables() {
         gameTime++;
 
-        if (gameTime % 30 == 0) {
-            skySpriteChange ? skySpriteChange = false : skySpriteChange = true;
+        // hide tutorial text
+        if (gameTime == 15) {
+            showStartText = false;
         }
 
+        // change sky sprite
+        if (gameTime % 30 == 0) {
+            showPlusText = true;
+            phase++;
+            skySpriteChange ? skySpriteChange = false : skySpriteChange = true;
+        } else {
+            showPlusText = false;
+        }
+
+        // adds difficulty
         const multiplier = 0.015;
         obstacleSpeed += multiplier;
         jumpSpeed += multiplier;
@@ -243,25 +291,50 @@ window.onload = function () {
         score = score + 10 // to update score every second, as a timer
     }
 
+    function writeAllTexts() {
+        writeScoreText();
+        writeStartText();
+        writePhaseText();
+        writePlusText();
+
+    }
     function writeScoreText() {
-        ctx.font = "30px Verdana";
+        ctx.font = "24px Verdana";
         ctx.fillStyle = textColor;
         ctx.textAlign = "left";
-        ctx.fillText("Pontuação: " + score, canvas.width / 40, canvas.height / 10);
+        ctx.fillText("Pontuação: " + score, 20, 40);
     }
 
-    function writeGameOverMessage() {
+    function writePhaseText() {
+        ctx.font = "24px Verdana";
+        ctx.fillStyle = textColor;
+        ctx.textAlign = "left";
+        ctx.fillText("Fase: " + phase, 20, 80);
+    }
+
+    function writePlusText() {
+        if (showPlusText) {
+            ctx.font = "24px Verdana";
+            ctx.fillStyle = textColor;
+            ctx.textAlign = "left";
+            ctx.fillText("+", 0, 80);
+        }
+    }
+
+    function writeGameOverText() {
         ctx.font = "72px Verdana";
         ctx.fillStyle = textColor;
         ctx.textAlign = "center";
         ctx.fillText("Fim de Jogo!", canvas.width / 2, canvas.height / 2);
     }
 
-    function writeStartMessage() {
-        ctx.font = "16px Verdana";
-        ctx.fillStyle = textColor;
-        ctx.textAlign = "center";
-        ctx.fillText("Toque na tela para pular", 650, canvas.height / 11.5);
+    function writeStartText() {
+        if (showStartText) {
+            ctx.font = "20px Verdana";
+            ctx.fillStyle = textColor;
+            ctx.textAlign = "center";
+            ctx.fillText("Toque na tela para pular", 650, 40);
+        }
     }
     //#endregion
 
@@ -270,34 +343,23 @@ window.onload = function () {
         return Math.floor(Math.random() * max) + 1;
     }
 
-    function preloadAllSprites() {
-        // player
-        preloadSprites(`${assetsUrl}player1_1.png`);
-        preloadSprites(`${assetsUrl}player1_2.png`);
-        preloadSprites(`${assetsUrl}player1_3.png`);
-        preloadSprites(`${assetsUrl}player1_4.png`);
+    function preloadSprites(imgURLs, imgArray, count) {
+        for (let i = 0; i <= count; i++) {
+            let img = new Image();
+            images.push(img);
 
-        // obstacles
-        preloadSprites(`${assetsUrl}obstacle_1.png`);
+            img.onload = onLoadHandler;
+            img.src = imgURLs[i];
 
-        // ground
-        preloadSprites(`${assetsUrl}ground1_1.png`);
-        preloadSprites(`${assetsUrl}ground1_2.png`);
-        preloadSprites(`${assetsUrl}ground1_3.png`);
-        preloadSprites(`${assetsUrl}ground1_4.png`);
-        preloadSprites(`${assetsUrl}ground1_5.png`);
-        preloadSprites(`${assetsUrl}ground1_6.png`);
-        preloadSprites(`${assetsUrl}ground1_7.png`);
-        preloadSprites(`${assetsUrl}ground1_8.png`);
-
-        // sky
-        preloadSprites(`${assetsUrl}sky1.png`);
-        preloadSprites(`${assetsUrl}sky2.png`);
+            if (img.complete) onLoadHandler.bind(img);
+        }
     }
 
-    function preloadSprites(url) {
-        let img = new Image();
-        img.src = url;
+    function onLoadHandler() {
+        count--;
+        if (count === 0) {
+            console.log("Done!");
+        }
     }
     //#endregion
 }
