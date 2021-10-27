@@ -62,7 +62,7 @@ window.onload = function () {
 
     // detect clicks and call MovePlayer()
     window.onkeydown = movePlayerUsingKeyboard;
-    window.ontouchstart = movePlayerUsingKeyboard;
+    window.ontouchstart = movePlayerUsingTouch;
 
     const gameSetup = () => {
         // sprite counters
