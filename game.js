@@ -1,47 +1,61 @@
 window.onload = function () {
     // preload sprites
-    const assetsUrl = "assets/"
+    const spritesUrl = "assets/sprites/";
     let imgURLs = [
         // player
-        `${assetsUrl}player1_1.png`,
-        `${assetsUrl}player1_2.png`,
-        `${assetsUrl}player1_3.png`,
-        `${assetsUrl}player1_4.png`,
+        `${spritesUrl}player1_1.png`,
+        `${spritesUrl}player1_2.png`,
+        `${spritesUrl}player1_3.png`,
+        `${spritesUrl}player1_4.png`,
 
         // obstacle
-        `${assetsUrl}obstacle_1.png`,
+        `${spritesUrl}obstacle_1.png`,
 
         // ground
-        `${assetsUrl}ground1_1.png`,
-        `${assetsUrl}ground1_2.png`,
-        `${assetsUrl}ground1_3.png`,
-        `${assetsUrl}ground1_4.png`,
-        `${assetsUrl}ground1_5.png`,
-        `${assetsUrl}ground1_6.png`,
-        `${assetsUrl}ground1_7.png`,
-        `${assetsUrl}ground1_8.png`,
+        `${spritesUrl}ground1_1.png`,
+        `${spritesUrl}ground1_2.png`,
+        `${spritesUrl}ground1_3.png`,
+        `${spritesUrl}ground1_4.png`,
+        `${spritesUrl}ground1_5.png`,
+        `${spritesUrl}ground1_6.png`,
+        `${spritesUrl}ground1_7.png`,
+        `${spritesUrl}ground1_8.png`,
 
         // sky
-        `${assetsUrl}sky1.png`,
-        `${assetsUrl}sky2.png`,
+        `${spritesUrl}sky1.png`,
+        `${spritesUrl}sky2.png`,
 
     ]
-    let images = []
-    let count = imgURLs.length;
+    let images = [];
 
-    preloadSprites(imgURLs, images, count);
+    const audiosUrl = "assets/audio/";
+    let audioURLs = [
+        `${audiosUrl}click.wav`,
+        `${audiosUrl}hurt.wav`,
+        `${audiosUrl}jump.wav`,
+    ]
+    let audios = [];
+
+    let assetCounter = { imgCount: imgURLs.length, audioCount: audioURLs.length };
+
+    preloadSprites(imgURLs, assetCounter.imgCount);
+
+    preloadAudios(audioURLs, assetCounter.audioCount);
+
+
 
     // event handler
     const button = document.getElementById('restart-button')
     button.addEventListener('click', () => {
-        gameSetup()
-        button.style.display = 'none'
+        audios[0].play()
+        gameSetup();
+        button.style.display = 'none';
     })
 
     const handler = new EventHandler();
     handler.on('game:lose', () => {
         // show restart button
-        button.style.display = 'block'  
+        button.style.display = 'block';
     });
 
     // canvas
@@ -50,11 +64,11 @@ window.onload = function () {
 
     // setting up sprites
     const player = new Image(), obstacle = new Image(), ground = new Image(), sky = new Image();
-    
-    obstacle.src = `${assetsUrl}obstacle_1.png`;
-    player.src = `${assetsUrl}player1_1.png`;
-    ground.src = `${assetsUrl}ground1_1.png`;
-    sky.src = `${assetsUrl}sky1.png`;
+
+    obstacle.src = `${spritesUrl}obstacle_1.png`;
+    player.src = `${spritesUrl}player1_1.png`;
+    ground.src = `${spritesUrl}ground1_1.png`;
+    sky.src = `${spritesUrl}sky1.png`;
 
 
     // sprite counters
@@ -150,6 +164,7 @@ window.onload = function () {
     //#region Functions related to Movement
     function movePlayerUsingKeyboard(keycode) {
         if (!isJumping) {
+            audios[2].play();
             switch (keycode.keyCode) {
                 case 32:
                 case 38:
@@ -190,7 +205,7 @@ window.onload = function () {
             window.clearInterval(playerSpriteTimer);
             window.clearInterval(difficultyTimer);
 
-
+            audios[1].play();
             writeGameOverText();
             handler.emit('game:lose');
         }
@@ -206,22 +221,22 @@ window.onload = function () {
     //#region Functions related to Sprite
 
     function changeSprites() {
-        
+
         changePlayerSprite();
         changeGroundSprite();
         changeSkySprite();
     }
 
     function changePlayerSprite() {
-        player.src = `${assetsUrl}player1_${playerSpriteCounter}.png`;
+        player.src = `${spritesUrl}player1_${playerSpriteCounter}.png`;
     }
 
     function changeGroundSprite() {
-        ground.src = `${assetsUrl}ground1_${groundSpriteCounter}.png`;
+        ground.src = `${spritesUrl}ground1_${groundSpriteCounter}.png`;
     }
 
     function changeSkySprite() {
-        skySpriteChange ? sky.src = `${assetsUrl}sky2.png` : sky.src = `${assetsUrl}sky1.png`
+        skySpriteChange ? sky.src = `${spritesUrl}sky2.png` : sky.src = `${spritesUrl}sky1.png`
     }
 
     function spriteTimer() {
@@ -240,7 +255,7 @@ window.onload = function () {
     function drawEverything(x, y) {
         drawSky();
         drawGround();
-        drawPlayer(x ,y);
+        drawPlayer(x, y);
         drawObstacle();
     }
 
@@ -343,22 +358,37 @@ window.onload = function () {
         return Math.floor(Math.random() * max) + 1;
     }
 
-    function preloadSprites(imgURLs, imgArray, count) {
-        for (let i = 0; i <= count; i++) {
+    function preloadSprites(imgURLs, count) {
+        for (let i = 0; i < count; i++) {
             let img = new Image();
             images.push(img);
 
-            img.onload = onLoadHandler;
+            img.onload = onLoadHandler("img");
             img.src = imgURLs[i];
 
             if (img.complete) onLoadHandler.bind(img);
         }
     }
 
-    function onLoadHandler() {
-        count--;
-        if (count === 0) {
-            console.log("Done!");
+    function onLoadHandler(type) {
+        if (type === "img") {
+            assetCounter.imgCount--;
+        } else if (type === "audio") {
+            assetCounter.audioCount--;
+        }
+
+        if (assetCounter.audioCount === 0 && assetCounter.imgCount === 0) {
+            console.log(" Loading done!");
+        }
+    }
+
+    function preloadAudios(audiosURLs, count) {
+        for (let i = 0; i < count; i++) {
+            let audio = new Audio();
+            audios.push(audio);
+            audio.addEventListener('canplaythrough', onLoadHandler("audio"), false)
+            audio.src = audiosURLs[i];
+
         }
     }
     //#endregion
