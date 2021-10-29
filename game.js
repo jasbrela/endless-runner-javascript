@@ -102,6 +102,7 @@ window.onload = function () {
     let score = 0;
     let timeout = 5;
     let game = setInterval(gameLoop, timeout);
+    let gameOver = false;
 
     // others
     let gameTime = 1;
@@ -141,6 +142,7 @@ window.onload = function () {
         score = 0;
         timeout = 5;
         game = setInterval(gameLoop, timeout);
+        gameOver = false;
 
         // others
         gameTime = 0;
@@ -163,7 +165,7 @@ window.onload = function () {
 
     //#region Functions related to Movement
     function movePlayerUsingKeyboard(keycode) {
-        if (!isJumping) {
+        if (!isJumping && !gameOver) {
             audios[2].play();
             switch (keycode.keyCode) {
                 case 32:
@@ -194,6 +196,7 @@ window.onload = function () {
                 clearInterval(jumpInterval);
             }
         }
+
     }
 
     function detectCollisions(obstacleX, obstacleY) {
@@ -205,6 +208,7 @@ window.onload = function () {
             window.clearInterval(playerSpriteTimer);
             window.clearInterval(difficultyTimer);
 
+            gameOver = true;
             audios[1].play();
             writeGameOverText();
             handler.emit('game:lose');
