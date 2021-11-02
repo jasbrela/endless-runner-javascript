@@ -1,0 +1,64 @@
+@font-face {
+  font-family: "GunShip";
+  src: url("../fonts/gunship.ttf") format("truetype");
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  font-family: "GunShip";
+}
+
+#splash-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  width: 90vw;
+  margin: 0 auto;
+}
+
+#splash-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  background-color: #4361ee;
+  width: 64rem;
+  height: 40rem;
+  align-items: center;
+  border-radius: 16px;
+}
+#splash-title {
+  font-size: 3em;
+  font-weight: bold;
+  color: #fff;
+}
+#splash-subtitle {
+  font-size: 1.5em;
+  color: #fff;
+}
+#splash-image {
+  width: auto;
+  height: 256px;
+}
+#splash-button {
+  width: 320px;
+  height: 56px;
+  background-color: #023e8a;
+  color: #fff;
+  border-radius: 8px;
+  border: none;
+  text-align: center;
+  cursor: pointer;
+}
+#splash-button:hover {
+  background-color: #03045e;
+}
+#button-text {
+  padding-top: 10px;
+  color: inherit;
+  font-size: 1.8em;
+  font-weight: bold;
+}
