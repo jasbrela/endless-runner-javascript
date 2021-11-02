@@ -42,8 +42,6 @@ window.onload = function () {
 
     preloadAudios(audioURLs, assetCounter.audioCount);
 
-
-
     // event handler
     const button = document.getElementById('restart-button')
     button.addEventListener('click', () => {
@@ -61,6 +59,8 @@ window.onload = function () {
     // canvas
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
+
+    loadGameOverFont();
 
     // setting up sprites
     const player = new Image(), obstacle = new Image(), ground = new Image(), sky = new Image();
@@ -166,10 +166,10 @@ window.onload = function () {
     //#region Functions related to Movement
     function movePlayerUsingKeyboard(keycode) {
         if (!isJumping && !gameOver) {
-            audios[2].play();
             switch (keycode.keyCode) {
                 case 32:
                 case 38:
+                    audios[2].play();
                     jumpInterval = setInterval(jump, 2);
                     break;
             }
@@ -318,14 +318,14 @@ window.onload = function () {
 
     }
     function writeScoreText() {
-        ctx.font = "24px Verdana";
+        ctx.font = "24px Clockwise";
         ctx.fillStyle = textColor;
         ctx.textAlign = "left";
         ctx.fillText("Pontuação: " + score, 20, 40);
     }
 
     function writePhaseText() {
-        ctx.font = "24px Verdana";
+        ctx.font = "24px Clockwise";
         ctx.fillStyle = textColor;
         ctx.textAlign = "left";
         ctx.fillText("Fase: " + phase, 20, 80);
@@ -333,7 +333,7 @@ window.onload = function () {
 
     function writePlusText() {
         if (showPlusText) {
-            ctx.font = "24px Verdana";
+            ctx.font = "24px Clockwise";
             ctx.fillStyle = textColor;
             ctx.textAlign = "left";
             ctx.fillText("+", 0, 80);
@@ -341,15 +341,21 @@ window.onload = function () {
     }
 
     function writeGameOverText() {
-        ctx.font = "72px Verdana";
+        ctx.font = "72px Wider";
         ctx.fillStyle = textColor;
         ctx.textAlign = "center";
-        ctx.fillText("Fim de Jogo!", canvas.width / 2, canvas.height / 2);
+        ctx.fillText("FIM DE JOGO!", canvas.width / 2, canvas.height / 2);
+    }
+
+    function loadGameOverFont() {
+        ctx.font = "10px Wider";
+        ctx.fillStyle = 000;
+        ctx.fillText(".", 0, 0);
     }
 
     function writeStartText() {
         if (showStartText) {
-            ctx.font = "20px Verdana";
+            ctx.font = "20px Clockwise";
             ctx.fillStyle = textColor;
             ctx.textAlign = "center";
             ctx.fillText("Toque na tela para pular", 650, 40);
@@ -392,7 +398,6 @@ window.onload = function () {
             audios.push(audio);
             audio.addEventListener('canplaythrough', onLoadHandler("audio"), false)
             audio.src = audiosURLs[i];
-
         }
     }
     //#endregion

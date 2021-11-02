@@ -1,13 +1,18 @@
 @font-face {
-  font-family: "GunShip";
-  src: url("../fonts/gunship.ttf") format("truetype");
+  font-family: "Wider";
+  src: url("../fonts/Wider\ Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Clockwise";
+  src: url("../fonts/clockwise.otf") format("opentype");
 }
 
 body {
   padding: 0;
   margin: 0;
   border: 0;
-  font-family: "GunShip";
+  font-family: "Wider";
 }
 
 #splash-wrapper {
@@ -25,17 +30,21 @@ body {
   flex-direction: column;
   justify-content: space-evenly;
   background-color: #4361ee;
+  background-image: url(../sprites/sky1.png);
+  background-repeat: repeat-x;
+  background-size: cover;
   width: 64rem;
   height: 40rem;
   align-items: center;
   border-radius: 16px;
 }
 #splash-title {
-  font-size: 3em;
+  font-size: 5em;
   font-weight: bold;
   color: #fff;
 }
 #splash-subtitle {
+  font-family: "Clockwise";
   font-size: 1.5em;
   color: #fff;
 }
@@ -46,7 +55,7 @@ body {
 #splash-button {
   width: 320px;
   height: 56px;
-  background-color: #023e8a;
+  background-color: #011343;
   color: #fff;
   border-radius: 8px;
   border: none;
@@ -54,7 +63,7 @@ body {
   cursor: pointer;
 }
 #splash-button:hover {
-  background-color: #03045e;
+  background-color: #517eb1;
 }
 #button-text {
   padding-top: 10px;
