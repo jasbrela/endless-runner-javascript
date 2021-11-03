@@ -177,7 +177,8 @@ window.onload = function () {
     }
 
     function movePlayerUsingTouch() {
-        if (!isJumping) {
+        if (!isJumping && !gameOver) {
+            audios[2].play();
             jumpInterval = setInterval(jump, 2);
         }
     }
