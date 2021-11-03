@@ -1,29 +1,35 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Walle-C Game</title>
-    <link rel="stylesheet" href="./assets/styles/splash_styles.css" />
-  </head>
-  <body>
-    <div id="splash-wrapper">
-      <div id="splash-content">
-        <div id="text-wrapper">
-          <h1 id="splash-title">WALLA-C</h1>
-          <p id="splash-subtitle">É jogando que se aprende e se diverte!</p>
-        </div>
-        <img src="./assets/sprites/player1_1.png" alt="" id="splash-image" />
-        <button id="splash-button" onclick="redirect()">
-          <span id="button-text">Jogar</span>
-        </button>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Walle-C Game</title>
+  <link rel="stylesheet" href="./assets/styles/splash_styles.css" />
+</head>
+
+<body>
+  <div id="splash-wrapper">
+    <div id="splash-content">
+      <div id="text-wrapper">
+        <h1 id="splash-title">WALLA-C</h1>
+        <p id="splash-subtitle">É jogando que se aprende e se diverte!</p>
+        <p id="splash-subtitle"><span style="color: rgb(255, 126, 126);"><strong>Utilize o Chrome e/ou um dispositivo Android
+              para ter uma melhor experiência
+            </strong></span></p>
       </div>
+      <img src="./assets/sprites/player1_1.png" alt="" id="splash-image" />
+      <button id="splash-button" onclick="redirect()">
+        <span id="button-text">Jogar</span>
+      </button>
     </div>
-  </body>
-  <script>
-    function redirect() {
-      window.location.href = "./game.html";
-    }
-  </script>
+  </div>
+</body>
+<script>
+  function redirect() {
+    window.location.href = "./game.html";
+  }
+</script>
+
 </html>
